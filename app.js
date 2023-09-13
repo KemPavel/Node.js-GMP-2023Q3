@@ -10,27 +10,30 @@ const commands = {
 const command = os.platform() === 'win32' ? commands.windows : commands.unix;
 
 const saveData = (data) => {
-  setInterval(() => {
-    const time = new Date().getTime();
-    const newLine = `${time}: ${data}`;
-    fs.appendFile('activityMonitor.log', newLine, (err) => {
-      if (err) throw err;
-      console.warn('Updated!');
-    });
-  }, 60 * 1000);
+  const time = new Date().getTime();
+  const newLine = `${time}: ${data}`;
+  fs.appendFile('activityMonitor.log', newLine, (err) => {
+    if (err) throw err;
+    console.warn('Updated!');
+  });
 };
 
-const execProcess = (cmd) => {
+const execProcess = (cmd, cb) => {
   childProcess.exec(cmd, (error, stdout) => {
     console.clear();
     console.log(stdout);
-    saveData(stdout);
+    cb && cb(stdout);
   });
 };
 
 setInterval(() => {
   execProcess(command);
 }, 100);
+
+setInterval(() => {
+  execProcess(command, saveData);
+}, 60 * 1000);
+
 
 process.on('uncaughtException', (error) => {
   console.error(`${(new Date).toUTCString()} uncaught exception: ${error.message}`);

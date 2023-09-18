@@ -6,7 +6,10 @@
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon index.js"
+    "start": "nodemon index.js",
+    "task1": "nodemon Module-3/Task1.js",
+    "task2": "nodemon Module-3/Task2.js",
+    "task3": "node Module-3/Task3.js"
   },
   "repository": {
     "type": "git",
@@ -21,5 +24,8 @@
   "homepage": "https://github.com/KemPavel/Node.js-GMP-2023Q3#readme",
   "devDependencies": {
     "nodemon": "^3.0.1"
+  },
+  "dependencies": {
+    "csvtojson": "^2.0.10"
   }
 }

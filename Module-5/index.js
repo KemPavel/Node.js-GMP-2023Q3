@@ -1,10 +1,7 @@
 import url from 'url';
 import http from 'http';
-import { handleMalformedRequest } from './helpers/helpers.js';
-import { sendHobbies, sendUserInfo, sendUsersList } from './helpers/GETHandlers.js';
-import { handleCreateUser } from './helpers/POSTHandlers.js';
-import { handleUpdateHobbies, handleUpdateUser } from './helpers/PATCHHandlers.js';
-import { handleDeleteUser } from './helpers/DELETEHandlers.js';
+import { handleMalformedRequest } from './services/common-service.js';
+import handleUsersRequest from './controllers/user-controller.js';
 
 
 const server = http.createServer((req, res) => {
@@ -19,50 +16,23 @@ const server = http.createServer((req, res) => {
 
   const [ , root, userId, hobbies ] = path;
 
-  switch (req.method) {
-    case 'GET': {
-      if (root === 'users' && userId && hobbies) {
-        sendHobbies(req, res, { id: userId });
-        return;
-      }
-
-      if (root === 'users' && userId) {
-        sendUserInfo(req, res, { id: userId });
-        return;
-      }
-
-      if (root === 'users') {
-        sendUsersList(req, res);
-        return;
-      }
+  switch (root) {
+    case 'users': {
+      handleUsersRequest(req, res, userId, hobbies);
       break;
     }
-    case 'POST': {
-      if (root === 'users') {
-        handleCreateUser(req, res);
-        return;
-      }
-      break;
-    }
-    case 'PATCH': {
-      if (root === 'users' && userId && hobbies) {
-        handleUpdateHobbies(req, res, { id: userId });
-        return;
-      }
-
-      if (root === 'users' && userId) {
-        handleUpdateUser(req, res, { id: userId });
-        return;
-      }
-      break;
-    }
-    case 'DELETE': {
-      if (root === 'users' && userId) {
-        handleDeleteUser(req, res, { id: userId });
-        return;
-      }
-      break;
-    }
+    // case 'products': {
+    //   handleProductsRequest(req, res, userId, hobbies);
+    //   break;
+    // }
+    // case 'cart': {
+    //   handleCartRequest(req, res, userId, hobbies);
+    //   break;
+    // }
+    // case 'order': {
+    //   handleOrderRequest(req, res, userId, hobbies);
+    //   break;
+    // }
     default: {
       handleMalformedRequest(res, { code: 500, message: 'Invalid request' });
     }

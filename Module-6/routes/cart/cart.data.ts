@@ -1,61 +1,41 @@
-import {carts, UpdateProductPayload} from "../../data/cart";
-import {orders} from "../../data/order";
-import { v4 as uuidv4 } from 'uuid';
+import { DI } from '../../index';
 
-const findCartByUserId = (id) => carts.find((cart) => cart.userId === id);
-const findOrderByUserId = (id) => orders.find((cart) => cart.userId === id);
-const getResponseFields = (cart) => ({
-    id: cart.id,
-    items: cart.items,
-});
+export const getCart = async (userId) => {
+  let cart = await DI.cartRepository.findOne({user: userId});
 
-export const getCart = (userId) => {
-    const userCart = findCartByUserId(userId);
-    if (userCart) {
-        return getResponseFields(userCart);
-    } else {
-        carts.push({
-            id: uuidv4(),
-            userId,
-            isDeleted: false,
-            items: [],
-        });
-        return findCartByUserId(userId);
-    }
+  if (!cart) {
+    cart = await DI.cartRepository.create({});
+  }
+
+  return cart;
 };
 
-export const updateCart = (userId, product: UpdateProductPayload) => {
-    const userCart = findCartByUserId(userId);
-    const userProduct = userCart.items.find((item) => item.product.id === product.productId);
-    if (userProduct) {
-        userProduct.count = product.count;
-    } else {
-        userCart.items.push({
-            product: {
-                id: product.productId,
-                title: '',
-                description: 'new product ' + product.productId,
-                price: 0
-            },
-            count: product.count
-        });
-    }
-    return getResponseFields(userCart);
+export const updateCart = async (userId, item) => {
+  const cart = await DI.cartRepository.findOne({user: userId});
+  const product = await DI.productRepository.findOne({ uuid: item.uuid });
+  if (product) {
+    product.count = item.count;
+    await DI.productRepository.persistAndFlush(product);
+  }
+  return cart;
 };
 
-export const deleteCartItems = (userId) => {
-    const userCart = findCartByUserId(userId);
-    userCart.items = [];
+export const deleteCartItems = async (userId) => {
+  const cart = await DI.cartRepository.findOne({user: userId});
+  if (cart) {
+    cart.items = null;
+    cart.isDeleted = true;
     return "success";
+  }
+
+  return "failure";
 };
 
-export const createOrder = (userId) => {
-    const userCart = findCartByUserId(userId);
-    if (userCart.items.length > 0) {
-        console.log('order: ', findOrderByUserId(userId));
-        return findOrderByUserId(userId);
-    } else {
-        return false;
-    }
+export const createOrder = async (userId) => {
+  const cart = await DI.cartRepository.findOne({user: userId});
+
+  if (cart && cart.items.length > 0) {
+    return await DI.orderRepository.create({});
+  }
 };
 

@@ -7,7 +7,7 @@
   "scripts": {
     "test": "jest",
     "test:coverage": "jest --coverage",
-    "start": "nodemon index.js",
+    "start": "nodemon Module-5/index.js",
     "task1": "nodemon Module-3/Task1.js",
     "task2": "nodemon Module-3/Task2.js",
     "task3": "node Module-3/Task3.js"

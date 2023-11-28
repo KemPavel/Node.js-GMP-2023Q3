@@ -15,7 +15,7 @@ export class CartController {
         return this.cartService.updateCart(headers['x-user-id'], body);
     }
     @Delete()
-    deleteCartItems(@Headers() headers: Request): Promise<'success' | 'failure'> {
+    deleteCartItems(@Headers() headers: Request) {
         return this.cartService.deleteCartItems(headers['x-user-id']);
     }
     @Post('/checkout')

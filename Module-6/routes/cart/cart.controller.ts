@@ -1,6 +1,5 @@
 import {Controller, Get, Put, Post, Delete, Headers, Body, Res, HttpStatus} from '@nestjs/common';
 import { CartService } from './cart.service';
-import {OrderEntity} from "../../data/order";
 
 @Controller('cart')
 export class CartController {
@@ -19,7 +18,7 @@ export class CartController {
         return this.cartService.deleteCartItems(headers['x-user-id']);
     }
     @Post('/checkout')
-    createOrder(@Res() res, @Headers() headers: Request): OrderEntity {
+    createOrder(@Res() res, @Headers() headers: Request) {
         const result = this.cartService.createOrder(headers['x-user-id']);
         return result ? res.send(result) : res.status(HttpStatus.BAD_REQUEST).send('Bad request');
     }

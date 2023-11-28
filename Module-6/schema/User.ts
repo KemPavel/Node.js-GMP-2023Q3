@@ -9,7 +9,3 @@ const userSchema = new Schema<UserEntity>({
 });
 
 export const User = model<UserEntity>("User", userSchema);
-
-// const admin = new User({
-//   id: 'admin'
-// });

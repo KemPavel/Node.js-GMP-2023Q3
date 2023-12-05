@@ -1,4 +1,5 @@
 import { NestFactory } from  '@nestjs/core';
+import morgan from 'morgan';
 import { AppModule } from  './app.module';
 import 'reflect-metadata';
 import dotenv from "dotenv";
@@ -21,11 +22,17 @@ const PORT = process.env.PORT;
 async  function  bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
   app.setGlobalPrefix('api');
+  app.use(morgan(function (tokens, req, res) {
+    return [
+      tokens.method(req, res),
+      tokens.url(req, res),
+      tokens['response-time'](req, res), 'ms'
+    ].join(' ')
+  }));
 
   const logger = new Logger('Shutdown');
   let connections = [];
 
-  // @see: https://docs.nestjs.com/fundamentals/lifecycle-events
   app.enableShutdownHooks();
 
   app.use((req, res, next) => {

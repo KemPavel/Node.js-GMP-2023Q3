@@ -1,13 +1,15 @@
-import { Module } from '@nestjs/common';
+import { Module, NestModule, MiddlewareConsumer } from '@nestjs/common';
 import {RouterModule} from "@nestjs/core";
 
 import {AuthModule} from "./routes/auth";
 import {CartModule} from "./routes/cart";
 import {ProductModule} from "./routes/product";
 
+import {verifyToken} from "./middleware/auth";
+
 @Module({
   imports: [
-    // AuthModule,
+    AuthModule,
     CartModule,
     ProductModule,
     RouterModule.register([
@@ -18,4 +20,10 @@ import {ProductModule} from "./routes/product";
     ])
   ],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer
+      .apply(verifyToken)
+      .forRoutes('api');
+  }
+}

@@ -4,6 +4,7 @@ import {RouterModule} from "@nestjs/core";
 import {AuthModule} from "./routes/auth";
 import {CartModule} from "./routes/cart";
 import {ProductModule} from "./routes/product";
+import {HealthModule} from "./routes/health";
 
 import {verifyToken} from "./middleware/auth";
 
@@ -12,6 +13,7 @@ import {verifyToken} from "./middleware/auth";
     AuthModule,
     CartModule,
     ProductModule,
+    HealthModule,
     RouterModule.register([
       {
         path: 'profile',

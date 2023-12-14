@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { getProducts, getProductById} from './product.data';
-import {ProductEntity} from "../../data/product";
+
 @Injectable()
 export class ProductService {
-    getProducts(): ProductEntity[] {
+    getProducts() {
         return getProducts();
     }
-    getProductById(id): ProductEntity {
+    getProductById(id) {
         return getProductById(id);
     }
 }

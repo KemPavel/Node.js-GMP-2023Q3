@@ -6,16 +6,16 @@ import {CartModule} from "./routes/cart";
 import {ProductModule} from "./routes/product";
 
 @Module({
-    imports: [
-        // AuthModule,
-        CartModule,
-        ProductModule,
-        RouterModule.register([
-            {
-                path: 'profile',
-                module: CartModule,
-            },
-        ])
-    ],
+  imports: [
+    // AuthModule,
+    CartModule,
+    ProductModule,
+    RouterModule.register([
+      {
+        path: 'profile',
+        module: CartModule,
+      },
+    ])
+  ],
 })
 export class AppModule {}

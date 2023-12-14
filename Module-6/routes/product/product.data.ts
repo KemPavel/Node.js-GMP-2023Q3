@@ -1,16 +1,9 @@
-import {QueryOrder} from '@mikro-orm/core';
-import { DI } from '../../index';
+import { Product } from '../../schema/Product';
 
 export const getProducts = async () => {
-  return await DI.productRepository.findAll({
-    populate: ['title', 'description', 'price'],
-    orderBy: { title: QueryOrder.DESC },
-    limit: 20,
-  });
+  return await Product.find().populate('title', 'description', 'price').exec();
 };
 
 export const getProductById = async (id) => {
-  return await DI.productRepository.find({uuid: id}, {
-    populate: ['title', 'description', 'price']
-  });
+  return await Product.findOne({uuid: id}).populate('title', 'description', 'price').exec();
 };

@@ -1,41 +1,44 @@
-import { DI } from '../../index';
-
+import { v4 as uuidv4 } from "uuid";
+import { Cart } from '../../schema/Cart';
+import { Order } from "../../schema/Order";
 export const getCart = async (userId) => {
-  let cart = await DI.cartRepository.findOne({user: userId});
+  let cart = await Cart.findOne({userId});
 
   if (!cart) {
-    cart = await DI.cartRepository.create({});
+    const newCart = new Cart({
+      id: uuidv4(),
+      userId,
+      isDeleted: false,
+      items: []
+    });
+    cart = await newCart.save();
   }
 
   return cart;
 };
 
 export const updateCart = async (userId, item) => {
-  const cart = await DI.cartRepository.findOne({user: userId});
-  const product = await DI.productRepository.findOne({ uuid: item.uuid });
-  if (product) {
-    product.count = item.count;
-    await DI.productRepository.persistAndFlush(product);
-  }
-  return cart;
+  const updateVal = {
+    count: item.count,
+  };
+  return await Cart.findOneAndUpdate({ userId }, {$set: { "items.$": updateVal }}).exec();
 };
 
 export const deleteCartItems = async (userId) => {
-  const cart = await DI.cartRepository.findOne({user: userId});
-  if (cart) {
-    cart.items = null;
-    cart.isDeleted = true;
-    return "success";
-  }
-
-  return "failure";
+  return await Cart.findOneAndUpdate({userId}, { items: [], isDeleted: true }, { new: true }).exec();
 };
 
 export const createOrder = async (userId) => {
-  const cart = await DI.cartRepository.findOne({user: userId});
+  const cart = await Cart.findOne({userId});
 
   if (cart && cart.items.length > 0) {
-    return await DI.orderRepository.create({});
+    const newOrder = new Order({
+      id: uuidv4(),
+      userId,
+      cartId: cart.id,
+      items: cart.items
+    });
+    return await newOrder.save();
   }
 };
 
